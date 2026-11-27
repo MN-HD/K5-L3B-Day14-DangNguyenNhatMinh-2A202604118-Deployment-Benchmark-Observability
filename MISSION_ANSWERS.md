@@ -95,6 +95,33 @@ Nginx → agent với mock LLM.
 
 Tôi đã dừng stack bằng `docker compose -p k5-day14-docker down`.
 
+## Part 3 — Cloud Deployment
+
+### Exercise 3.1 — Railway
+
+Tôi deploy agent trong `06-lab-complete/` lên Railway và kết nối với
+service Redis trong cùng project. URL public: https://optimistic-compassion-production-057e491a.up.railway.app
+
+Tôi chạy bốn lệnh kiểm tra từ Ubuntu: `/health` trả `200`, `/ready` trả
+`200`, `POST /ask` thiếu key trả `401`, và `POST /ask` có key trả `200`.
+Xem lệnh và ảnh bằng chứng trong [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### Exercise 3.2 — So sánh Railway và Render
+
+Ví dụ `railway.toml` cấu hình build và deploy cho một service. Ví dụ
+`render.yaml` dùng Blueprint để khai báo nhiều service, chọn Python
+runtime và đặt lệnh Uvicorn nghe trên `$PORT`. Render dùng `sync: false`
+cho biến cần điền trên dashboard. Cả hai ví dụ đều cấu hình `/health`.
+Railway đã ngừng cho service mới dùng Config-as-code, nên tôi đặt cấu
+hình triển khai trực tiếp trên dashboard và giữ `railway.toml` trong repo.
+
+### Exercise 3.3 — Pipeline Cloud Run
+
+Cloud Build chạy `pytest` trước để kiểm tra mã nguồn.
+Nếu test đạt, pipeline build Docker image và đẩy image lên registry.
+Sau khi push, `gcloud` deploy image lên Cloud Run.
+`service.yaml` mô tả cấu hình service, gồm cổng container và giới hạn tài nguyên.
+
 ## Part 4 — API Security
 
 ### Exercise 4.1 — API key
@@ -225,3 +252,5 @@ lượng 273 MB. Khi nhận SIGTERM trong lúc xử lý request, agent vẫn tr�
   và cấu hình Railway. Tôi áp dụng các thay đổi vào bản fork, tự kiểm tra
   API key và trạng thái khi dừng Redis, rồi chạy script chấm trên máy để
   xác nhận kết quả `PASS 12/12`.
+
+- Part 3: Tôi dùng ChatGPT để được hướng dẫn cấu hình Railway, xử lý lỗi truy cập domain và đối chiếu cấu hình Railway, Render và Cloud Run. Tôi tự deploy và kiểm tra bốn mã HTTP trên URL public.
